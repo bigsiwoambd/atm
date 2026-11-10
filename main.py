@@ -1,12 +1,25 @@
 """A small, in-memory console ATM for learning and demonstration."""
 
 from decimal import Decimal, InvalidOperation
+from datetime import date
 
 
-DEMO_PIN = "1234"
+DEMO_BIRTH_DATE = date(2000, 1, 1)
 STARTING_BALANCE = Decimal("1000.00")
 CENT = Decimal("0.01")
-MAX_PIN_ATTEMPTS = 3
+MAX_BIRTH_DATE_ATTEMPTS = 3
+
+
+def parse_birth_date(value):
+    """Return a valid YYYY-MM-DD birth date, or None."""
+    value = value.strip()
+    try:
+        birth_date = date.fromisoformat(value)
+    except ValueError:
+        return None
+    if birth_date.isoformat() != value or birth_date > date.today():
+        return None
+    return birth_date
 
 
 def parse_amount(value):
@@ -42,13 +55,13 @@ class ATM:
 
 
 def authenticate():
-    for attempt in range(MAX_PIN_ATTEMPTS):
-        pin = input("Enter your 4-digit PIN: ").strip()
-        if pin == DEMO_PIN:
+    for attempt in range(MAX_BIRTH_DATE_ATTEMPTS):
+        birth_date = parse_birth_date(input("Enter your birth date (YYYY-MM-DD): "))
+        if birth_date == DEMO_BIRTH_DATE:
             return True
-        remaining = MAX_PIN_ATTEMPTS - attempt - 1
+        remaining = MAX_BIRTH_DATE_ATTEMPTS - attempt - 1
         if remaining:
-            print(f"Incorrect PIN. {remaining} attempt(s) remaining.")
+            print(f"Incorrect birth date. {remaining} attempt(s) remaining.")
     print("Too many incorrect attempts. Goodbye.")
     return False
 
